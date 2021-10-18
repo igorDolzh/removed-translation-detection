@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: igorDolzh/removed-translation-detection@v0.0.1
+      - uses: igorDolzh/removed-translation-detection@0.0.2
         with:
           # Api token for the Lokalise account
           # with read/write access to the project

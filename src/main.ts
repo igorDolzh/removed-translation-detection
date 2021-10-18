@@ -19,46 +19,51 @@ function getPattern(format: string) {
 }
 
 async function run() {
-    const gitHub = await new Octokit({
-        auth: githubToken
-    })
+    try { 
+        const gitHub = await new Octokit({
+            auth: githubToken
+        })
 
-    const commitDiff = await gitHub.repos.compareCommits({
-        owner: githubOwner,
-        repo: githubRepo,
-        base: shaBase,
-        head: shaHead
-    })
+        const commitDiff = await gitHub.repos.compareCommits({
+            owner: githubOwner,
+            repo: githubRepo,
+            base: shaBase,
+            head: shaHead
+        })
 
-    const parsedLangs = JSON.parse(langs)
-    const langFiles = parsedLangs.map((lang: string) => filePath.replace(LANG_ISO_PLACEHOLDER, lang))
+        const parsedLangs = JSON.parse(langs)
+        const langFiles = parsedLangs.map((lang: string) => filePath.replace(LANG_ISO_PLACEHOLDER, lang))
 
-    function getMessages(source: string): string[] {
-        const pattern = getPattern(filePath?.split('.').reverse()[0])
+        function getMessages(source: string): string[] {
+            const pattern = getPattern(filePath?.split('.').reverse()[0])
 
-        if (pattern) {
-            const rex = pattern
-            const re = new RegExp(rex, 'g')
-            const extract = source.match(re)
-            return extract
-                ?.map((text: string) => {
-                    const matches = text.match(rex)
-                    return matches ? matches[0] : ''
-                })
-                ?.filter((text: string) => Boolean(text)) || []
+            if (pattern) {
+                const rex = pattern
+                const re = new RegExp(rex, 'g')
+                const extract = source.match(re)
+                return extract
+                    ?.map((text: string) => {
+                        const matches = text.match(rex)
+                        return matches ? matches[0] : ''
+                    })
+                    ?.filter((text: string) => Boolean(text)) || []
+            }
+
+            return []
+
         }
+        if (commitDiff) {    
+            const messages = commitDiff?.data?.files?.filter((fileData) => langFiles.includes(fileData.filename)).map((fileData) => getMessages(fileData?.patch || ''))
 
-        return []
+            const haveMessagesWithDeletedTranslations = messages?.some((messages) => messages?.length > 0)
 
-    }
-    if (commitDiff) {    
-        const messages = commitDiff?.data?.files?.filter((fileData) => langFiles.includes(fileData.filename)).map((fileData) => getMessages(fileData?.patch || ''))
-
-        const haveMessagesWithDeletedTranslations = messages?.some((messages) => messages?.length > 0)
-
-        if (haveMessagesWithDeletedTranslations) {
-            throw new Error('You have deleted translations')
+            if (haveMessagesWithDeletedTranslations) {
+                throw new Error('You have deleted translations')
+            }
         }
+    } catch (e: any) {
+        const errorMessage = `${e.name} ${e.message}`
+        console.error(`${errorMessage} ${e.stack}`)
     }
     console.log('None of the translation have been removed') 
 }
