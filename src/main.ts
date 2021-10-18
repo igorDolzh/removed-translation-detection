@@ -53,9 +53,10 @@ async function run() {
 
         }
         if (commitDiff) {    
-            const messages = commitDiff?.data?.files?.filter((fileData) => langFiles.includes(fileData.filename)).map((fileData) => getMessages(fileData?.patch || ''))
-
-            const haveMessagesWithDeletedTranslations = messages?.some((messages) => messages?.length > 0)
+            const haveMessagesWithDeletedTranslations = commitDiff?.data?.files
+                ?.filter((fileData) => langFiles.includes(fileData.filename))
+                ?.map((fileData) => getMessages(fileData?.patch || ''))
+                ?.some((messages) => messages?.length > 0)
 
             if (haveMessagesWithDeletedTranslations) {
                 throw new Error('You have deleted translations')
