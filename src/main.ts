@@ -61,11 +61,12 @@ async function run() {
                 throw new Error('You have deleted translations')
             }
         }
+        console.log('None of the translation have been removed') 
     } catch (e: any) {
         const errorMessage = `${e.name} ${e.message}`
         console.error(`${errorMessage} ${e.stack}`)
-    }
-    console.log('None of the translation have been removed') 
+        ghCore.setFailed(errorMessage)
+    } 
 }
 
 run()
