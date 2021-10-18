@@ -1,0 +1,33 @@
+name: Lingui translation status
+description: "Checks what translations are missing in the current PR"
+branding:
+  icon: arrow-up-circle
+  color: purple
+inputs:
+  format:
+    description: Format of the files with messages
+    required: true
+  file-path:
+    description: The file path to find language files
+    required: true
+  github-token:
+    description: Github token
+    required: true
+  github-owner:
+    description: Github owner
+    required: true
+  github-repo:
+    description: Github repo
+    required: true
+  sha-base:
+    description: SHA Base
+    required: true
+  sha-head:
+    description: SHA Head
+    required: true
+  file-langs:
+    description: List of languages
+    required: true
+runs:
+  using: "node12"
+  main: "lib/main.js"
