@@ -44,7 +44,7 @@ async function run() {
                 return extract
                     ?.map((text: string) => {
                         const matches = text.match(rex)
-                        return matches ? matches[0] : ''
+                        return matches ? matches[1] : ''
                     })
                     ?.filter((text: string) => Boolean(text)) || []
             }
@@ -60,7 +60,7 @@ async function run() {
             const haveMessagesWithDeletedTranslations = listOfMessages?.some((messages) => messages?.length > 0)
 
             if (haveMessagesWithDeletedTranslations) {
-                throw new Error('You have deleted translations: ' + listOfMessages?.join(','))
+                throw new Error('You have deleted translations for: ' + listOfMessages?.filter((messages) => messages?.length > 0)?.join(','))
             }
         }
         console.log('None of the translation have been removed') 
