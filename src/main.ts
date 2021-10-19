@@ -53,12 +53,20 @@ async function run() {
 
         }
         if (commitDiff) {    
+            console.log(langFiles)
             const haveMessagesWithDeletedTranslations = commitDiff?.data?.files
                 ?.filter((fileData) => langFiles.includes(fileData.filename))
-                ?.map((fileData) => getMessages(fileData?.patch || ''))
+
+                const haveMessagesWithDeletedTranslations1 = haveMessagesWithDeletedTranslations?.map((fileData) => getMessages(fileData?.patch || ''))
+                const haveMessagesWithDeletedTranslations2 = haveMessagesWithDeletedTranslations1
                 ?.some((messages) => messages?.length > 0)
 
-            if (haveMessagesWithDeletedTranslations) {
+            console.log('DATA')
+            console.log(haveMessagesWithDeletedTranslations)
+            console.log(haveMessagesWithDeletedTranslations1)
+            console.log(haveMessagesWithDeletedTranslations2)
+
+            if (haveMessagesWithDeletedTranslations2) {
                 throw new Error('You have deleted translations')
             }
         }
