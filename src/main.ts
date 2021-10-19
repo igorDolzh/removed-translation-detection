@@ -13,7 +13,7 @@ const LANG_ISO_PLACEHOLDER = "%LANG_ISO%";
 
 function getPattern(format: string) {
     if (format === 'po') {
-        return /msgid "([\w ]*)".*\n\-msgstr "[\w ]*".*\n\+msgstr.""/
+        return /msgid "(.*)".*\n\-msgstr ".*".*\n\+msgstr.""/
     }
     return null
 }
@@ -52,22 +52,15 @@ async function run() {
             return []
 
         }
-        if (commitDiff) {    
-            console.log(langFiles)
-            const haveMessagesWithDeletedTranslations = commitDiff?.data?.files
+        if (commitDiff) {
+            const listOfMessages = commitDiff?.data?.files
                 ?.filter((fileData) => langFiles.includes(fileData.filename))
+                ?.map((fileData) => getMessages(fileData?.patch || ''))
+                
+            const haveMessagesWithDeletedTranslations = listOfMessages?.some((messages) => messages?.length > 0)
 
-                const haveMessagesWithDeletedTranslations1 = haveMessagesWithDeletedTranslations?.map((fileData) => getMessages(fileData?.patch || ''))
-                const haveMessagesWithDeletedTranslations2 = haveMessagesWithDeletedTranslations1
-                ?.some((messages) => messages?.length > 0)
-
-            console.log('DATA')
-            console.log(haveMessagesWithDeletedTranslations)
-            console.log(haveMessagesWithDeletedTranslations1)
-            console.log(haveMessagesWithDeletedTranslations2)
-
-            if (haveMessagesWithDeletedTranslations2) {
-                throw new Error('You have deleted translations')
+            if (haveMessagesWithDeletedTranslations) {
+                throw new Error('You have deleted translations: ' + listOfMessages?.join(','))
             }
         }
         console.log('None of the translation have been removed') 
