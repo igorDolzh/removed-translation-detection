@@ -38,6 +38,7 @@ async function run() {
             const pattern = getPattern(filePath?.split('.').reverse()[0])
 
             if (pattern) {
+                console.log(source)
                 const rex = pattern
                 const re = new RegExp(rex, 'g')
                 const extract = source.match(re)
@@ -66,7 +67,7 @@ async function run() {
         console.log('None of the translation have been removed') 
     } catch (e: any) {
         const errorMessage = `${e.name} ${e.message}`
-        console.error(`${errorMessage} ${e.stack}`)
+        console.error(`${e.stack}`)
         ghCore.setFailed(errorMessage)
     } 
 }
