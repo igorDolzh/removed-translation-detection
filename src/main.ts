@@ -13,7 +13,7 @@ const LANG_ISO_PLACEHOLDER = "%LANG_ISO%";
 
 function getPattern(format: string) {
     if (format === 'po') {
-        return /msgid "(.*)".*\n\-msgstr ".*".*\n\+msgstr.""/
+        return /msgid "(.*)".*\n\-msgstr ".*".*\n\+msgstr.""\n( |\+)\n/
     }
     return null
 }
